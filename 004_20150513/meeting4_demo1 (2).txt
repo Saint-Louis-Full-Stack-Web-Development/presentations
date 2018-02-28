@@ -1,0 +1,335 @@
+xx. Create EC2 Instance:
+    - Linux
+    - Security Group
+	- Confirm correct IP address(es)
+
+xx. Log into EC2 using Putty:
+	Session :: Host Name (or IP address)
+	ubuntu@ec2-52-6-154-11.compute-1.amazonaws.com
+
+	Session :: Port
+	22
+
+	Connection >> SSH >> Auth :: Private key file for authentication:
+	C:\Users\bryan\Downloads\bjones-key-pair-east.ppk
+
+
+My New IP Address:
+24.178.251.37/32
+
+My Old IP Address:
+24.178.249.218/32
+
+My EC2 Public IP Address:
+52.6.154.11
+
+--------
+
+xx. Look for nginx (should not be available)
+
+	:~$ find / -name "nginx*" 2> /dev/null
+
+
+xx. FAILED #1 (Connect to website IP address)
+
+	http://52.6.154.11
+
+
+xx. Update Ubuntu Packages
+
+	:~$ sudo apt-get update
+
+
+xx. Install nginx
+
+	:~$ sudo apt-get install nginx
+
+	Key Files:
+		/usr/share/nginx/html/index.html (our homepage)
+		/etc/nginx/sites-available/default
+		/etc/init.d/nginx (to check the running status of nginx)
+
+		/usr/local/nginx/sbin/nginx (to boot up the server) [?]
+		/usr/local/nginx/conf/nginx.conf (to talk to php)   [?]
+
+
+xx. SUCCESS #1 (Connect to website IP address)
+
+	http://52.6.154.11
+
+
+xx. Update the index.html hompage w/ "FullStacker" text
+
+	:~$ sudo nano /usr/share/nginx/html/index.html
+
+
+xx. Refresh homepage in browser to see the changes
+
+
+xx. Add a profile.html page
+
+	:~$ sudo cp /usr/share/nginx/html/index.html /usr/share/nginx/html/profile.html
+
+
+xx. Update the profile.html page w/ "Profile" text
+
+	:~$ sudo nano /usr/share/nginx/html/profile.html
+
+
+xx. Go to profile.html page in browser to see the changes
+
+--------
+
+xx. Look for php (should not be available)
+
+	:~$ find / -name "php*" 2> /dev/null
+
+
+xx. Install php and php/pg components
+
+	:~$ sudo apt-get install php5-fpm php5-common php5-json {php5-pgsql} [php5-cli] 
+
+	Key Files:
+
+		/etc/php5/fpm/php.ini (php configuration settings)
+		/etc/php5/fpm/pool.d/www.conf (so php5-fpm listens on the socket) 
+
+
+xx. Edit etc/php5/fpm/php.ini file
+
+	UPDATE the following line:
+
+		;cgi.fix_pathinfo = 0;
+
+
+xx. Edit etc/php5/fpm/pool.d/www.conf file
+
+	CONFIRM the following line is:
+
+		listen = /var/run/php5-fpm.sock
+
+
+xx. (?) Restart php5-fpm (?)
+
+	:~$ sudo service php5-fpm restart
+
+-------
+
+xx. Edit etc/nginx/sites-available/default file
+
+	:~$ sudo nano /etc/nginx/sites-available/default
+
+	UPDATE the 2nd line w/ index.php:
+		root /usr/share/nginx/html;
+		index index.php index.html index.htm
+
+	Uncomment the following lines:
+		location ~ \.php$ {
+			# fastcgi_split_path_info ^(.+\.php)(/.+)$;
+			# fastcgi_pass 127.0.0.1:9000;
+		fastcgi_pass unix:/var/run/php5-fpm.sock;
+		fastcgi_index index.php;
+		include fastcgi_params;
+		}
+
+--------
+
+xx. Create a index.php file
+
+	:~$ sudo nano /usr/share/nginx/html/index.php
+
+	INCLUDE the lines:
+		<?php
+
+		  echo phpinfo();
+
+		?>
+
+
+xx. FAILED #2 (Connect to website PHP homepage)
+
+	http://52.6.154.11
+
+
+xx. Restart php5-fpm AND THEN Restart nginx to see index.php as homepage
+
+	:~$ sudo service php5-fpm restart
+	:~$ sudo service nginx restart
+
+
+xx. SUCCESS #2 (Connect to website PHP homepage)
+
+	http://52.6.154.11
+
+--------
+
+xx. Look for postgresql (should not be available)
+	:~$ find / -name "postg*" 2> /dev/null
+
+
+xx. Create repository file
+
+	:~$ sudo nano /etc/apt/sources.list.d/pgdg.list
+
+	Add the line:
+	
+		deb http://apt.postgresql.org/pub/repos/apt trusty-pgdg main
+
+
+xx. Import the repository signing key
+
+	:~$ wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | \	    	    sudo apt-key add -
+
+	    [ This is all one line! ]
+
+
+xx. Update the package lists
+
+	:~$ sudo apt-get update
+
+
+xx. Install Postgresql 9.4
+
+	:~$ sudo apt-get install postgresql-9.4
+
+
+xx. Confirm the correct version of Postgresql is installed (9.4)
+
+	:~$ psql --version
+
+--------
+
+xx. Get into Postgresql for the first time
+
+	:~$ sudo -u postgres psql postgres
+
+
+yy. OR connect to the default database with the user: postgres
+
+	:~$ sudo -u postgres psql template1 (template1 is one of the 3 original db's)
+
+xx. List all the original databases
+
+	=# \list
+
+
+xx. Create a new database
+
+	=# CREATE DATABASE fullstacker;
+
+
+xx. See what database I'm currently in
+
+	=# SELECT current_database();
+
+
+xx. Connect to the newly created database
+
+	=# \c fullstacker
+
+
+xx. Create a new table in the newly created database
+
+	=# CREATE TABLE testuser (userid INTEGER, username VARCHAR(100));
+
+
+xx. Insert records in the new table
+
+	=# INSERT INTO testuser (userid, username) VALUES (1, 'CoolCat'), (2, 'Yams');
+
+
+xx. List tables in the current database
+
+	=# \dt
+
+
+xx. To exit Postgresql
+
+	=# \q
+
+
+--------
+@@@@@@@@
+--------
+
+xx. Install php5-pgsql
+
+
+xx. Create PHP/Postgresql page
+
+	:~$ sudo nano /usr/share/nginx/html/test.php
+
+	Paste in PHP code
+
+
+xx. FAILED #3 (Connect to PHP/Postgresql page)
+
+	Go to http://.../test.php
+
+
+xx. Prep php and postgresql to talk to each other
+
+	https://jeremee.wordpress.com/2009/03/17/setup-postgresql-database-and-php5-onto-ubuntu-linux/
+
+
+xx. Update php.ini file
+
+	:~$ sudo nano /etc/php5/fpm/php.ini
+
+	Add this line at the bottom of the page:
+
+		extension=pgsql.so
+
+
+xx. Restart nginx
+
+	:~$ sudo service nginx restart
+
+
+xx. Update postgresql.conf file
+
+	:~$ sudo nano /etc/postgresql/9.4/main/postgresql.conf
+
+	(a) Search for 'localhost' in the file
+		Ctrl-W >> localhost
+	(b) Find the line:
+		listen_addresses = 'localhost'
+	(c) Remove the "#" at the beginning of the line
+	(d) Replace 'localhost' w/ '*' (ignore the apostrophes)
+		THE FINISHED LINE: listen_addresses = '*'
+
+
+xx. Modify the pg_hba.conf file
+
+	:~$ sudo nano /etc/postgresql/9.4/main/	pg_hba.conf
+
+	CHANGE THE FOLLOWING METHODS TO trust:
+
+	TYPE	DATABASE	USER	ADDRESS		METHOD
+	local	all		all			trust
+	host	all		all	127.0.0.1/32	trust
+	host	all		all	::1/128		trust 
+
+
+xx. Restart Postgresql
+
+	:~$ sudo service postgresql restart (works)
+			OR
+	:~$ /etc/init.d/postgresql restart (doesn't work)
+
+
+xx. SUCCESS #3 (Connect to PHP/Postgresql page)
+
+	Go to http://.../test.php
+
+
+------------------------------------------------------------
+
+To stop nginx:
+	:~$ sudo service nginx stop
+
+To start nginx:
+	:~$ sudo service nginx start
+
+To restart nginx:
+	:~$ sudo service nginx restart

@@ -1,0 +1,25 @@
+AngularJS and PHP:
+http://stackoverflow.com/questions/15623967/should-i-mix-angularjs-with-a-php-framework
+http://blog.backand.com/angularjs-slim-php-framework/
+http://devzone.co.in/angularjs-simple-example-post-data-php-page/
+http://www.phpro.org/tutorials/Consume-Json-Results-From-PHP-MySQL-API-With-Angularjs-And-PDO.html
+
+SlimPHP:
+http://www.codediesel.com/php/create-a-quick-rest-api-using-slim-framework/?utm_source=feedburner&utm_medium=feed&utm_campaign=Feed%3A+Code-diesel+%28code-diesel%29
+
+Horoscope APIs:
+https://github.com/tapasweni-pathak/Horoscope-API
+
+http://www.horoscope.com/
+http://my.horoscope.com/astrology/free-daily-horoscope-scorpio.html
+http://my.horoscope.com/astrology/free-monthly-horoscope-scorpio.html
+http://my.horoscope.com/astrology/yesterday-horoscope-scorpio.html
+http://my.horoscope.com/astrology/tomorrow-horoscope-scorpio.html
+
+http://zodiac-signs-astrology.com/
+
+-----------
+
+http://www.w3schools.com/php/php_switch.asp
+http://davidwalsh.name/php-shorthand-if-else-ternary-operators
+http://www.w3schools.com/php/php_functions.asp

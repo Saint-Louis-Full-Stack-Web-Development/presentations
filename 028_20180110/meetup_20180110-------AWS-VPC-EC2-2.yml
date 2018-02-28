@@ -1,0 +1,61 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Launches an EC2 into an existing VPC"
+
+Parameters:
+  myOperatingSystem:
+    Type: String
+    Default: ubuntu
+    AllowedValues:
+      - ubuntu
+      - redhat
+    Description: Enter ubuntu or redhat. Default is ubuntu.
+  myParentStack:
+    Type: String
+    Description: Enter the name of your parent stack (with the VPC components)
+
+Mappings:
+  RegionMap:
+    us-east-1:    # N. Virginia
+      ubuntu: "ami-aa2ea6d0"
+      redhat: "ami-26ebbc5c"
+    us-west-1:    # N. California
+      ubuntu: "ami-45ead225"
+      redhat: "ami-77a2a317"
+    eu-west-1:    # Ireland
+      ubuntu: "ami-8fd760f6"
+      redhat: "ami-c90195b0"
+
+Resources:
+  EC2InstancePUBLIC:
+    Type: "AWS::EC2::Instance"
+    Properties:
+      ImageId: !FindInMap [ RegionMap, !Ref "AWS::Region", !Ref myOperatingSystem ]
+      InstanceType: "t2.micro"
+      KeyName: "cali-1"
+      BlockDeviceMappings:
+        - DeviceName: "/dev/sda1"
+          Ebs:
+            VolumeType: "gp2"
+            DeleteOnTermination: "true"
+            VolumeSize: "10"
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: "true"
+          DeviceIndex: "0"
+          GroupSet:
+            - Fn::ImportValue: !Sub "${myParentStack}-sg-publicID" # jones-sg-publicID
+          SubnetId:
+            Fn::ImportValue: !Sub "${myParentStack}-sub-publicID" # jones-sub-publicID
+      Tags:
+      - Key: Name
+        Value:  !Sub "ec2-public-${myOperatingSystem}"
+      UserData:
+        Fn::Base64:
+          Fn::Sub: |
+            #!/bin/bash
+            if [ ${myOperatingSystem} == "redhat" ]; then
+              sudo yum install httpd -y; sudo systemctl start httpd.service
+            elif [ ${myOperatingSystem} == "ubuntu" ]; then
+              sudo apt-get install apache2 -y
+            else
+              # do nothing...
+            fi

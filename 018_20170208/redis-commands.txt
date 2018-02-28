@@ -1,0 +1,194 @@
+00. Setup
+
+
+----------------------
+
+01. STRING
+
+SET name "Jones"
+GET name
+SET name Bryan
+APPEND name " is my first name."
+SETNX name "Peter"	# won't work!
+INCR age
+INCRBY age 5
+DECR age
+DECRBY age 10
+STRLEN name
+MSET mammal whale car kia
+GET mammal
+MGET mammal car
+MSETNX mammal pig tree oak	# not even tree gets created!
+MSETNX tree oak mammal pig # not even tree gets created! (?)
+
+KEYS *
+KEYS na*
+EXISTS name
+DEL name
+RENAME name name_NEW
+RENAMENX name_NEW name_NEWEST
+EXPIRE name_NEWEST 20		# in seconds must use EPOCH time
+PEXPIRE name_NEWEST 5000	# in milliseconds
+TTL name_NEWEST
+PERSIST name_NEWEST
+TYPE name_NEWEST
+
+----------------------
+
+02. HASH
+
+HSET people john 12
+HSET people peter 44
+HSET people sam 117
+HGET people john
+HGETALL people
+HVALS people
+HKEYS people
+HMSET people kim 9 ted 33 ben 13
+HMGET people kim john
+HDEL people ben
+HDEL people john peter
+HLEN people
+
+HMSET scores user1 0 user2 0 user3 0
+HINCRBY scores user2 5
+HINCR scores user3  # does not work!!!
+HEXISTS scores user1
+HKEYS scores
+HVALS scores
+
+----------------------
+
+03. LIST
+
+LPUSH colors red blue green
+LRANGE colors 0 -1
+LLEN colors
+LPUSH colors yellow
+RPUSH colors pink
+LINSERT colors BEFORE blue purple
+LINSERT colors AFTER blue yellow
+LPOP colors
+RPOP colors
+LPUSHX colors violet
+LPUSHX colorsNEW violet
+LREM colors 1 violet
+    LPUSH colors yellow   # repeat!
+LREM colors 3 yellow
+LREM colors 0 yellow  # removes all instances
+LPUSH colors yellow
+RPUSH colors yellow
+LREM colors -1 yellow   # removes 1st from the tail
+    RPUSH colors yellow
+LREM colors -2 yellow   # removes the 1 - 2 from the tail
+LREM colors 5 yellow    # removes 1 - 5 from the head
+LRANGE colors -5 0      # gets the 1st value from the tail.... ABS(-5) MUST >= LLEN(colors)
+LRANGE colors -5 1      # gets the 1 - 2 from the tail.... ABS(-5) MUST >= LLEN(colors)
+
+SORT colors ALPHA
+SORT colors ALPHA DESC
+
+----------------------
+
+04. SET
+
+SADD art pencil
+SADD art paint
+SADD art brush
+SADD art brush
+SADD art canvas "m&m's"
+SCARD art
+SREM art pencil
+SMEMBERS art
+SISMEMBER art pencil
+SISMEMBER art eraser
+SPOP art
+SADD food burger cheese paint milk carrot
+SUNION art food
+SDIFF art food
+SDIFF food art
+SINTER art food
+
+SUNIONSTORE newset_foodart food art
+SDIFFSTORE newdiff_foodart food art
+SDIFFSTORE newdiff_artfood art food
+SINTERSTORE newinter_artfood art food
+
+SMEMBERS newset_foodart		# will return all members from art AND food
+SMEMBERS newdiff_foodart
+SMEMBERS newdiff_artfood
+SMEMBERS newinter_artfood
+
+
+SADD articles 1 2 3 4 5     # article id's
+SADD tags:new 4 5
+SADD tags:trending 1 3 4
+
+SINTER tags:new tags:trending
+SDIFF articles tags:trending
+
+SDIFFSTORE old_articles articles SADD tags:new
+SMEMBERS old_articles
+SDIFFSTORE old_boring_articles old_articles tags:trending
+SMEMBERS old_boring_articles
+
+
+SADD deck C2 C3 C4 C5 C6 C7 C8 C9 C10 CJ CQ CK CA H2 H3 H4 H5 H6 H7 H8 H9 H10 HJ HQ HK HA D2 D3 D4 D5 D6 D7 D8 D9 D10 DJ DQ DK DA S2 S3 S4 S5 S6 S7 S8 S9 S10 SJ SQ SK SA
+SCARD deck      # vs. SMEMBERS
+SRANDMEMBER deck 5
+SRANDMEMBER deck 2
+SCARD deck      # vs. SMEMBERS
+SPOP deck 5     # in 3.2.x
+SPOP deck
+
+DEL art food newset_foodart newdiff_foodart newdiff_artfood newinter_artfood
+DEL articles tags:new tags:trending old_articles old_boring_articles
+DEL deck
+
+----------------------
+
+05. SORTED SET
+
+ZADD players 1 john
+ZADD players 30 ben 10 kim 50 sam 20 julie
+ZRANGE players 0 -1
+ZRANGE players 0 -1 WITHSCORES
+ZREVRANGE players 0 -1 WITHSCORES
+ZREVRANGE players 0 0 WITHSCORES
+ZSCORE players kim
+ZCARD players
+ZCOUNT players 0 20
+ZRANGEBYSCORE players 0 20
+ZRANGEBYSCORE players 0 20 WITHSCORES
+
+ZRANGE players 0 -1
+ZRANK players john
+ZREVRANK players john
+ZRANK players ben
+ZREVRANK players ben
+
+ZADD players 111 john   # overwrites john's score
+DEL players
+
+----------------------
+
+# Add 3 users
+hmset user:1 user_name lee age 21
+hmset user:2 user_name david age 25
+hmset user:3 user_name chris age 25
+hset user:1 city "st. louis"
+
+# Maintain age index
+sadd age:21 1
+sadd age:25 2 3
+
+# Maintain name index
+sadd user_name:lee 1
+sadd user_name:david 2
+sadd user_name:chris 3
+
+# Get the ID of users having age = 25 and name = lee
+sinter age:25 user_name:lee
+  -> will return an empty set
+sinter age:21 user_name:lee
+  -> will return an id of 1

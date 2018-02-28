@@ -1,0 +1,163 @@
+BOOTSTRAP:
+http://tutsme-webdesign.info/bootstrap-form-with-a-script-sending-data-to-a-database/
+
+
+PHP:
+
+** Good PHP Explanation! **
+
+1. Server-Side Scripting (PHP)
+http://tutsme-webdesign.info/write-a-php-script-to-send-form-data/
+
+Open the file with the form and add the action and method attributes to the opening form tag:
+
+<form class="form-horizontal" id="form_members" role="form" action="send_formdata_members.php" method="POST">
+
+----
+
+Create a new file with a PHP extension and use the file name you just inserted after the action attribute in the form. Insert the script below into this new php file:
+
+<?php
+$link = mysqli_connect("localhost","root","password")  or die("failed to connect to server !!");
+mysqli_select_db($link,"all_sports");
+if(isset($_REQUEST['submit']))
+{
+$errorMessage = "";
+$firstname=$_POST['firstname'];
+$lastname=$_POST['lastname'];
+$gender=$_POST['gender'];
+$dob=$_POST['dob'];
+$address=$_POST['address'];
+$city=$_POST['city'];
+$zipcode=$_POST['zipcode'];
+$region=$_POST['region'];
+$phone=$_POST['phone'];
+$email=$_POST['email'];
+ 
+// Validation will be added here
+ 
+if ($errorMessage != "" ) {
+echo "<p class='message'>" .$errorMessage. "</p>" ;
+}
+else{
+//Inserting record in table using INSERT query
+$insqDbtb="INSERT INTO `all_sports`.`members`
+(`firstname`, `lastname`, `gender`, `dob`, `address`,
+`city`, `zipcode`, `region`, `phone`, `email`) VALUES ('$firstname', '$lastname', 
+'$gender', '$dob', '$address', '$city', '$zipcode', '$region', '$phone', '$email')";
+mysqli_query($link,$insqDbtb) or die(mysqli_error($link));
+}
+}
+?>
+
+----
+
+1. Client-Side Validation (BootstrapValidator)
+
+http://tutsme-webdesign.info/bootstrap-validation-states-dynamically/
+
+----
+
+LAST_INSERT_ID() for Postgresql
+
+http://www.postgresqltutorial.com/postgresql-insert/
+
+
+# id is the SERIAL datatype in the 'link' table
+
+INSERT INTO link (url, name, last_update)
+VALUES
+	('https://www.tumblr.com/','Tumblr',DEFAULT);
+
+
+# the above query inserted the 8th record in the 'link' table
+
+INSERT INTO link (url, NAME, last_update)
+VALUES('http://www.postgresql.org','PostgreSQL',DEFAULT) 
+RETURNING id;
+
+# value from the above query should be '8'
+
+
+----
+
+Redirect to another page after form submission
+
+http://stackoverflow.com/questions/17157685/php-redirect-to-another-page-after-form-submit
+
+
+http://stackoverflow.com/questions/16121742/redirect-after-form-submission
+
+<?php    
+if (isset($_POST['wp-submit']))
+    {   
+        header('Location: http://site/result.php');       
+    }
+?>
+
+in the top of your code
+
+OR you can try to do it by javascript with onsubmit="window.location.href='result.php';"
+
+Full URLs should be used in header redirects, not relative paths.
+
+
+http://stackoverflow.com/questions/21730854/php-redirect-to-new-page-after-form-submission
+
+<?php
+//do establish session
+//and check for the input fields obtained via $_POST
+if(isset($_POST['name_of_your_field']) && !empty($_POST['name_of_your_field'])){
+    if(!mail($to,$subject,$message)){
+        header('location:form.php?msg=error');  // absolute path needed?
+    }else{
+        header('location:page2.php?msg=succes');  // absolute path needed?
+        }
+}   
+?>
+
+
+**** EXCELLENT SITE (based on the comments) ****
+http://www.formget.com/how-to-redirect-a-url-php-form/
+
+
+--------
+
+Linux Permission:
+http://www.maketecheasier.com/file-permissions-what-does-chmod-777-means/
+
+chmod u+x g+rw o+r filename
+
+chmod u+rwx g+rwx o+rwx /user/share/nginx/html/profiles
+
+u – user
+g – group
+o – other (world)
+
+r – read
+w- write
+x – execute
+
+-----------------------------------------------------------------------
+
+# How to redirect to another page after submission?
+
+# LAST_INSERT_ID() for Postgresql?
+
+# How to encrypt passwords (SHA-256)?
+
+# How to encrypt email addresses (SHA-256)?
+
+# Top-level navigation bar?
+	http://getbootstrap.com/components/#navbar
+
+	Home
+	Your Profile
+	Sign Up
+	Login | Logout
+	Welcome CoolCat!
+
+# Logout page (and redirect)?
+
+
+SELECT memberid FROM member WHERE email = " . $email . " AND password = " . $pwd1

@@ -1,0 +1,200 @@
+HAProxy ... Ubuntu ... Nginx :
+https://www.youtube.com/watch?v=dRU7rqqX7ho
+
+Set up 5 EC2's
+
+	- Salt Master
+	- Load Balancer
+	- Web Server #1
+	- Web Server #2
+	- Web Server #3 - Ubuntu/apache OR CentOS/nginx
+
+-----------------
+Load Balancer box
+-----------------
+
+* Freshen the box
+
+	# sudo apt-get update
+	# sudo apt-get upgrade
+		- If the upgrade asks: 
+			Just choose the "install the package maintainer's version"
+
+* Install HAProxy
+
+	# sudo apt-get install haproxy
+
+* Enable HAProxy
+
+	So we can use the service commands to start, restart, or stop HAProxy
+
+	# sudo nano /etc/default/haproxy
+
+	(In the file)
+	ENABLED=0 .... to .... ENBALED=1
+
+	(Confirm HAProxy is NOT YET running)
+	# sudo service haproxy status
+
+* 
+
+-----------------
+Web Server #1 box
+-----------------
+
+* Set up nginx as web server
+
+	# sudo apt-get install nginx
+
+* Create dir
+
+	# sudo mkdir /srv/www
+
+* Make sure nginx user owns this directory
+
+	# sudo chown www-data:www-data /srv/www;
+	(www-data is the default nginx user ?)
+
+* Create file
+
+	# sudo nano /srv/www/index.html
+
+	(In the file)
+	<h1>Web Server #1</h1>
+
+* Confirm ownership of this file 
+
+	# ls -alh /srv/www/index.html
+
+	(Root will still own this file at this point ... BAD!)
+
+* Make sure nginx user owns this file
+
+	# sudo chown www-data:www-data /srv/www/index.html
+
+* Remove default nginx configuration (?)
+
+	# sudo rm /etc/nginx/sites-enabled/default
+
+* Create our own config file
+
+	# sudo nano /etc/nginx/sites-enabled/tutorial
+
+	(In the file)
+	server{
+		listen 80;
+		root /srv/www;
+	}
+
+* Start nginx
+
+	# sudo service nginx restart
+		- using reload instead of restart won't kill any existing connections
+
+* Confirm nginx is working
+
+	# curl localhost
+
+	(We should see our index.html content returned)
+
+
+-----------------
+Load Balancer box
+-----------------
+
+* Set up our 2 - 3 web server nodes
+
+	# sudo nano /etc/haproxy/haproxy.cfg
+
+	https://www.howtoforge.com/tutorial/ubuntu-load-balancer-haproxy/
+	(In the file)
+	listen webfarm 0.0.0.0:80
+		mode http
+		stats enable
+		stats uri /haproxy?stats
+		balance roundrobin
+		option httpclose
+		option forwardfor
+		server web1 172.30.1.80:80 check
+		server web2 172.30.2.17:80 check 
+
+	---------
+	** OLD **
+	---------
+	(In the file)
+
+	frontend tutorial_in
+		bind *:80
+		default_backend tutorial_http
+
+	backend tutorial_http
+		balance roundrobin
+		mode http
+		server web1 10.132.219.132:80 check
+		server web2 10.132.206.133:80 check
+
+	---------
+
+	Paste in our front-end and back-end blocks at the bottom of the file
+	Get our PRIVATE networking addresses for the web servers
+		Place these addresses into the back-end servers (done, above)
+		PRIVATE !!! Not public addresses (which we put into our url bar)
+	*** USE TABS to indent! HAProxy is finnicky about that
+	*** Make sure there are NO SPACES after each line in the file (Finnicky)
+	
+
+	-- Front end accepts incoming connections
+	-- Then we bind it to all addresses listening on port 80
+	-- Set our default backend
+
+	-- Backend mode is round robin
+	-- mode = http (or tcp, etc.)
+	-- Include our servers
+	
+
+* Reload HAProxy
+
+	# cd /etc/default
+		??? - when i reloaded from the root /, it did not work
+		??? - however, when i cd into /etc/default, sudo service haproxy reload DID work
+	# sudo service haproxy start
+		- OR -
+	# sudo service haproxy reload
+
+* Check localhost on our load balancer (This should return <h1>web1</h1>
+
+	# curl localhost
+
+	# curl localhost
+		(Hopefully, web2 returns ... Round Robin!)
+
+* To add an extra web server AFTER haproxy is already going
+	- Restart nginx on the new web server
+		# sudo service nginx restart
+	- Restart haproxy
+		# sudo service haproxy restart
+
+-----------------
+Web Server #1 box
+-----------------
+
+* Check access logs on each web server
+
+	# sudo tail -f /var/log/nginx/access.log
+
+	(Now, when we curl localhost on load balancer, a record should be appended)
+
+##########################################
+
+PUBLIC IP ADDRESSES :
+
+Web Server #1 :
+54.164.59.128
+
+Web Server #2 :
+54.175.101.30
+
+HAProxy :
+54.173.150.0
+
+http://54.173.150.0/haproxy?stats

@@ -1,0 +1,27 @@
+http://jes.st/2011/phpunit-bootstrap-and-autoloading-classes/
+https://phpunit.de/manual/current/en/appendixes.assertions.html
+
+PHP Podcasts :
+
+* Voices of the Elephant (Cal Evans ... focus on community)
+* PHP Town Hall (Sturgeon)
+* PHP Round Table (Sammy K. Powers ... Interviews big names in PHP)
+* Full Stack Radio (PHP and Rails)
+
+* Laravel Podcast
+
+--------
+
+http://stackoverflow.com/questions/3822882/the-xdebug-extension-is-not-loaded
+https://jtreminio.com/2012/07/xdebug-and-you-why-you-should-be-using-a-real-debugger/
+https://getcomposer.org/doc/01-basic-usage.md
+http://phpenthusiast.com/blog/how-to-autoload-with-composer
+http://stackoverflow.com/questions/23083045/the-package-is-not-available-in-a-stable-enough-version-according-to-your-minimu
+http://code.tutsplus.com/tutorials/all-about-mocking-with-phpunit--net-27252
+
+http://www.sitepoint.com/tutorial-introduction-to-unit-testing-in-php-with-phpunit/
+http://www.sitepoint.com/advanced-phpunit-testing-annotations-and-mocking/
+
+http://www.softwaretestinghelp.com/types-of-software-testing/
+http://www.softwaretestingtricks.com/2007/01/unit-testing-versus-functional-tests.html
+http://codeutopia.net/blog/2015/04/11/what-are-unit-testing-integration-testing-and-functional-testing/comment-page-1/

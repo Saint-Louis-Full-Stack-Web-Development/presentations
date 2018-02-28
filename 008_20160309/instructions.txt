@@ -1,0 +1,101 @@
+01. Set up your EC2 Instance
+
+>>> Update the package manager
+    $ sudo apt-get update
+
+02. Install Composer
+
+>>> Install dependencies
+    $ sudo apt-get install curl php5-cli git 		-- (?) php5-curl
+
+>>> Download and install Composer
+    $ curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
+
+>>> Confirm Successful Installation
+    $ composer
+
+
+03. Create Composer.json File
+04. Install PHPUnit and XDebug
+
+        The composer.json file basically tells Composer which dependencies it needs to download for your project,
+        and which versions of each package are allowed to be installed.
+
+        Go to https://packagist.org/
+	Packagist is the main Composer repository
+
+
+ >>> DIR : /srv/www/phpUnitTutorial
+
+     For PHPUnit :
+     $ sudo composer require phpunit/phpunit
+
+     For Xdebug :
+     $ sudo composer require sebastian/environment
+
+
+
+07. Create Test Directory
+>>> DIR : /srv/www/phpUnitTutorial
+    $ sudo mkdir Test
+
+
+08. Create PHPUnit.xml File
+
+	This file tells PHPUnit where to find its tests
+
+>>> DIR : /srv/www/phpUnitTutorial
+    $ sudo nano phpunit.xml
+
+In the file :
+
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit colors="true">
+    <testsuites>
+        <testsuite name="Application Test Suite">
+            <directory>./Test/</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>
+
+
+
+09. Add autoloader to composer.json	* NOT NEEDED SINCE I'M USING include_once in test files *
+
+>>> DIR : /srv/www/phpUnitTutorial
+
+    $ sudo nano composer.json
+
+In the file (Add the autoload portion manually) :
+
+{
+    "require": {
+        "phpunit/phpunit": "^4.8",
+        "sebastian/environment": "^1.3"
+    },
+
+    "autoload":{
+        "psr-0":{
+            "":""
+        }
+    }
+}
+
+
+
+---------------------------------------------------------------------
+
+x 05. Add Project Namespace to Composer.json
+
+>>> DIR : /usr/local/bin
+    $ sudo nano composer.json
+
+	In the file :
+
+
+x 06. Update Composer
+
+>>> DIR : /usr/local/bin
+    $ sudo composer update
+
+

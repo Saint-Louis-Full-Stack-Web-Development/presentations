@@ -1,0 +1,59 @@
+High-Level
+
+* Recap
+	Quick Intro - Not an Expert!
+	What ... How ... HOW
+	Last Meeting - Deployments
+	Why AWS?
+* Ask group about AWS familiarity
+* Please jump in w/ any questions or clarifications!
+
+-------
+
+* Sign up w/ AWS
+
+* Explain First Components and Concepts
+
+* Launch EC2 Instance
+
+* Install PuTTY
+
+* Failed Login Attempt #1
+
+* Successful Login Attempt
+
+* Ubuntu!
+
+* Key Ubuntu Directories
+
+* Basic Linux Commands
+
+* Explain Web Server
+
+* Failed URL - Home Attempt #1
+
+* Install Nginx
+
+* Successful URL - Home Attempt
+
+* Show HTML
+
+* Failed URL - About US Attempt #1
+
+* Successful URL - About Us Attempt
+
+* Extra Nginx Commands:
+
+* Elastic IP Addresses
+
+* PRICING: So What's This Gonna Cost You?
+
+-------
+
+* Launch EC2 Instance from EBS-Backed AMI(?).... NO!!!!!!
+
+* Next Steps For The Group
+
+* Resources By The Weekend!
+
+* Next Meeting

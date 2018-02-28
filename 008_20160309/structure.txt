@@ -1,0 +1,89 @@
+/var/www/bjones/
+
+{{ php files }}
+
+public_html (web root)
+
+    - composer.json < run $ sudo composer install >
+    - composer.lock < >
+    @ vendor < >
+
+    - index.php < require __DIR__ '/../vendor/autoload.php'>
+
+
+######################################
+
+/srv/www/
+
+    @ phpUnitTutorial (project root)
+
+        - User.php
+        - UserManager.php
+
+        @ Test
+            - UserTest.php
+            - UserManagerTest.php
+
+        - composer.json < run $ sudo composer install >
+        - composer.lock < >
+        @ vendor < >
+	    - autoload.php
+	    @ bin
+	    @ composer
+	    @ doctrine
+	    @ phpdocumentor
+	    @ phpunit
+	    @ sebastian
+	    @ symfony
+
+######################################
+
+Hi Juan,
+I now see a green bar from the StupidTest!
+I've listed my working structure out below.
+ 
+I believe /srv/www/phpUnitTutorial is my ROOT directory.
+To execute tests, from /srv/www/phpUnitTutorial :
+	vendor/bin/phpunit
+
+I had to modify the directory in phpunit.xml to point to : "./Test"
+	( instead of "./phpUnitTutorial/Test" )
+
+- = files ... and @ = directories
+
+But please let me know if you think my current structure will cause issues for the rest of your tutorial!
+
+And thanks for all the help on this, Juan.
+
+
+----- MY STRUCTURE -----
+
+/usr/local/bin/
+    - composer
+
+/srv/www/
+
+    - index.html
+
+    @ phpUnitTutorial ... ** ROOT **
+
+           - composer.json
+           - composer.lock
+           - phpunit.xml (directory => ./Test)
+
+	   - Stupid.php (not needed for now)
+
+           @ Test
+                - StupidTest.php
+
+           @ vendor
+                - autoload.php
+	        @ bin
+	        @ composer
+                @ doctrine
+                @ phpdocumentor
+                @ phpspec
+	        @ phpunit
+	        @ sebastian
+                @ symfony
+

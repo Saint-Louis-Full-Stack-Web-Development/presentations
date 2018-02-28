@@ -1,0 +1,325 @@
+High-Level
+
+* Recap
+	Quick Intro - Not an Expert!
+	What ... How ... HOW
+	Last Meeting - Deployments
+	Why AWS?
+* Ask group about AWS familiarity
+* Please jump in w/ any questions or clarifications!
+
+-------
+
+* Sign up w/ AWS
+    - Go to http://aws.amazon.com/
+    - Click "Sign Up Now" button
+    - Enter your email address
+    - Fill in the account form
+    - Enter your credit card info
+	- Can banking account and routing info work?
+	- Would an Amazon gift card work?
+    - Fill in identity verification form
+	- You should receive a text w/ a PIN... Type PIN in the browser
+	- Do you have to provide a phone #?
+    - Wait for your "Welcome" e-mail
+
+* Explain First Components and Concepts
+    - Log into your console
+    - Virtualization
+	Allows isolated multiple programs/users to share physical HW resorces
+    - Regions and Availablity Zones
+	Physical regions where actual hardware is located
+	Pricing varies by region (not for availability zones)
+	Some service restrictions across regions (not for availability zones)
+    - EC2 (VPC)
+	Virtual Computing Power
+    - AMI
+	Image of an EC2 at a given point in time
+    - EBS
+	Permanent data store independent of an EC2's life
+    - IP Addresses (Elastic and Default) ... Security Groups
+    - SSH ... PuTTY ... Ports ... pem/ppk files
+    - Ubuntu ... Nginx
+
+* Launch EC2 Instance
+    - AMI Ubuntu 14.04 (Free; EBS-backed)
+    - Find CIC Wifi IP Address
+	My Home: 24.178.249.218/32
+	Chuck Berry: 65.254.97.40/32
+    - Security Group
+    - Do NOT Delete EBS on EC2 Termination
+    - Save .pem file location
+    - Note the EC2 IP Address
+
+* Install PuTTY
+    - Ask group who is using Windows machines at home!
+
+    - http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/putty.html
+	- Download PuTTY and PuTTYgen
+	- URL: PuTTY page
+	    http://www.putty.org/
+	    http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html
+		Latest Release Version
+		putty.exe
+		puttygen.exe
+		- Did I need to do anything else?
+
+	- Convert .pem file to .ppk
+	    Execute PuTTYgen First!
+		- Did I need to do anything else?
+
+    - Other PuTTY links:
+	http://stackoverflow.com/questions/10287337/ssh-to-amazon-ec2-instance-using-putty-in-windows
+
+* Failed Login Attempt #1
+    - Use the correct syntax (ubuntu... NOT ec2)!
+	Host Name => ubuntu@ec2-52-1-143-200.compute-1.amazonaws.com
+	Port => 22
+	Connection type => SSH
+    - No .ppk key
+* Successful Login Attempt
+    - Added .ppk key
+	SSH >> Auth -> Private key file => 
+		C:\Users\bryan\Downloads\bjones-key-pair-east.ppk
+    - Remove IP Address from Security Group for Failed #2 (?)
+
+* Ubuntu!
+    - ubuntu@ip-172-30-0-31
+	User Name: ubuntu
+	Host Name: ip-172-30-0-31
+
+* Key Ubuntu Directories
+    - bin
+	core binaries used by admins and regular users
+    - sbin
+	sys binaries for recovery if boot not working - only used by admins
+    - boot
+	stores kernel images and other configuration files
+    - lib
+	core system binaries to complete the boot process
+    - mnt
+	generic location to mount a disk temp (to move files to/from the system)
+    - media
+	mount point for removable media (flopp disks, CD-ROMs, USBs)
+    - home
+	home dir's for all users on the system (mount to preserve user settings)
+		** I used this to send files via FTP **
+    - proc
+	virtual file system; not on disk - in RAM!!; live system info here (PIDs)
+    - root
+	home directory for the root user 
+    - var
+	store files that can be variable in size (e.g. sys logs, web server docs) 
+	[allows us to mount var as its own partition, maybe on faster disks?
+	If growth is too much the system won't crash]
+    - tmp
+	stores temporary state info
+    - sys
+	virtual file system; info about devices and drivers
+
+    - etc
+	config files for services; system start-up scripts
+	(etc/init, etc/init.d, etc/default)
+		** Always at least backup this directory! **
+    - usr
+	non-critical binaries and libraries
+	(allows main root partition to stay small)
+
+* Basic Linux Commands
+    - EXPLAIN sudo!
+	- DEFN: sudo allows you to perform operations on files that only the 
+	        Root User would be allowed to change
+
+    - See your version of Ubuntu
+	    lsb_release -a
+    - Takes you to the top-level directory
+	    cd /
+	    * Explain Absolute vs. Relative Paths!
+    - See the folders and files
+	    ls
+    - Move up one level
+	    cd ..
+    - Move up two levels
+	    cd ../..
+
+* Explain Web Server
+    - DEFN::
+	A program that uses HTTP to serve files that form web pages to users
+	User computers contain HTTP clients that forward their requests
+	Each computer on the Internet has a web server program
+	    Ex: Apache, MS IIS, Node.js, and .... Nginx!
+
+    - Find your EC2's ip address (cmd vs. console)
+	    curl http://icanhazip.com
+
+* Failed URL - Home Attempt #1
+    - No Web Server
+* Install Nginx
+    - Find a file (or folder?) by name
+	    find / -name "nginx*" 2> /dev/null
+    - See latest available version (per Ubuntu)
+	    apt-cache policy nginx [postgresql | php5 | php5-fpm]
+    - Get latest updates
+	    sudo apt-get update
+    - Install latest package (per Ubuntu)
+	    sudo apt-install nginx [postgresql | php5 | php5-fpm]
+
+    - Relevant Nginx directories
+	Nginx is installed in folder:
+	    * etc/nginx
+	Nginx config file:
+	    * etc/nginx/nginx.conf
+	Default site served from:
+	    * usr/share/html
+	Default site config info:
+	    * etc/nginx/sites-available/default
+
+* Successful URL - Home Attempt
+    - Added Web Server
+
+* Show HTML
+    - DEFN: HTML defines web page structure and components
+    - Modify Home Page
+	    cd /usr/share/html
+	    sudo nano index.html
+    - Show Modified Home Page
+
+* Failed URL - About US Attempt #1
+    - No About Us Page
+* Successful URL - About Us Attempt
+    - Created About Us Page
+	    cd /usr/share/html
+	    sudo cp index.html about.html
+	    sudo nano about.html
+	[Todo?] Include link to S3 image (?)
+	[Todo?] Added CSS to change background color (?)
+
+* Extra Nginx Commands:
+    - Stop service
+	sudo service nginx stop
+    - Start service
+	sudo service nginx start
+    - Restart sevice
+	sudo service nginx restart
+    - Make sure web server restarts automatically at boot time
+	sudo update-rc.d nginx defaults
+
+* Elastic IP Addresses
+    - 2 Things Wrong With Our Site's Address
+	(1) Not catchy (e.g. google.com, amazon.com)
+	(2) Is only temporary
+    - Solutions!
+	(1) DNS (Amazon Route 53)
+		- Next Meeting We Will Discuss This Service!
+	(2) Elastic IP Addresses
+		- Create and Associate New Elastic IP Address!
+
+    DEFN::
+	You get 2 IP addresses at launch: Private and Public (which is mapped to the private IP address via a Network Address Translation (NAT). Your public IP is associated with your instance, not your account.
+
+	Your EIP is associated with your AWS account, not a particular instance, and it remains associated with your account until you choose to explicitly release it.
+
+	AWS imposes a small hourly charge if an EIP is not associated with a running instance
+	
+
+* PRICING: So What's This Gonna Cost You? [ToDo!]
+    URL: http://aws.amazon.com/ec2/pricing/
+    - Free 1st Year
+	* 750 hours EC2 Linux, MS Windows Server (t2.micro instance usage)
+	* 750 hours ELB plus 15 GB data processing
+	* 30 GB of EBS (Gen Purpose SSDs or Magnetic)
+		2 Million I/Os
+		1 GB of snapshot storage
+	* 15 GB of bandwidth out across all AWS services
+	* 1 GB of Regional Data Transfer
+
+    - EC2 (VPC)
+    URL: http://aws.amazon.com/ec2/pricing/
+	* On Demand vs. Reserved Pricing
+		On Demand - No long term commitments
+		Reserved - Discounted, but upfront pricing... reserved capacity
+		Spot - Bid for unused EC2 capacity
+		    Instance Type; AZ; # of Inst's; Max. Price per Inst/hour
+		    m3.medium : $0.07/hr ($52.50/mo) vs. $0.0081/hour ($6.075)
+			Deals not as good for smaller instances
+			I'm not sure how missed bids are handled
+
+	* No additonal charge for VPCs (unless you use hardware VPN)
+
+	* Data Transfer
+		IN:
+		Usually free b/w AWS services (esp. within the same region)
+		Private IP transfers usu. Free; Public $0.01/GB
+
+		OUT:
+		First 1GB = FREE
+		1GB - 10TB (Terabytes) = $0.09/GB
+		Pricing declines as your data usage increases
+
+    - EBS
+	* Regular:
+		General Purpose (SSD)  : $0.10/GB-month
+		Provisioned IOPS (SSD) : $0.125/GB-month
+				       : $0.065 per provisioned IOPS-month
+		    a. I provision 1000 IOPS
+		    b. I use for 15 days (out of 30)
+		    c. Region charges $0.10 per provisioned IOPS-month
+		    d. I'm charged $50 ($0.10 X 1000 X 15/30)
+
+	* EBS-Optimized:
+		Deliver dedicated throughput b/w EC2 and EBS
+		Pricier than Regular ($0.02 per hour? and up)
+
+
+    - Elastic IP Addresses
+		1st EIP attached to running instance = FREE!
+		2nd EIP attached to running instance = $0.005 per hour ($3.75/mo)
+		Any EIP not attachted = $0.005 per hour ($3.75/mo)
+		0 - 100 Remaps = FREE!
+		101 and up Remaps = $0.10 per remap
+
+    - S3 (?)
+
+
+-------
+
+* Launch EC2 Instance from EBS-Backed AMI(?)
+    - Save as snapshot
+    - Launch a non-snapshot EC2 Instance
+    	    Find nginx (It should not exist!)
+    - Launch a snapshot EC2 Instance
+	    Find nginx (It should exist!)
+
+* Next Steps For The Group
+    - Sign Up With AWS
+    - Region: N.East ... Availablity Zone: N. Virginia
+    - Spin Up an Instance
+	* t1.micro
+	* Ubuntu 14.04
+		- Install from an AMI (Free-tier)
+    - Feel free to ask questions of me or the group outside of meetings
+
+* * Resources By The Weekend!
+    - AWS signup
+    - EC2 Launch
+    - Putty (Windows -> Linux)
+    - Linux SSH Instructions (Linux -> Linux)
+	* Let me know of any others (Mac?)
+
+* Next Meeting
+    - Elastic IP's ... Domains ... Route 53 
+    - Nginx config stuff
+    - PHP5 ... PHP-FPM
+    - Postgresql 9.4
+	- pg&php connectors
+    - Images from S3 (?)
+    - Alerts for Usage Monitoring (?)
+
+    - Text Editor (?) (Sublime ... Eclipse)
+    - CSS (?)
+    - jQuery (?)
+    - FTP FileZilla (?)
+    - Better Security Practices (?)
+
+
+

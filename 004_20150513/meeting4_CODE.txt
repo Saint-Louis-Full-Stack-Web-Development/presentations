@@ -1,0 +1,18 @@
+<?php 
+$conn = pg_connect("host=localhost port=5432 dbname=test1 user=postgres password=postgres");
+if (!$conn) {
+  echo "An error occurred.\n";
+  exit;
+}
+
+$result = pg_query($conn, "SELECT membername, signid, applydate FROM member");
+if (!$result) {
+  echo "Bad query, boss...\n";
+  exit;
+}
+
+while ($row = pg_fetch_assoc($result)) {
+  echo $row['membername'];
+  echo '<br />';
+}
+?>

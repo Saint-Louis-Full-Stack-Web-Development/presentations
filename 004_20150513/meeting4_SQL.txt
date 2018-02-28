@@ -1,0 +1,141 @@
+DROP TABLE horoscope;
+-- DROP TABLE memberimage;
+DROP TABLE memberhobby;
+DROP TABLE member;
+DROP TABLE memberapplicant;
+DROP TABLE sign;
+
+----
+
+CREATE TABLE sign
+(
+  signid SMALLINT NOT NULL UNIQUE
+  , sign VARCHAR(40) NOT NULL UNIQUE
+);
+
+----
+
+CREATE TABLE memberapplicant
+(
+  membername VARCHAR(255) NOT NULL UNIQUE
+  , email VARCHAR(255) NOT NULL PRIMARY KEY
+  , password VARCHAR(255) NOT NULL
+  , birthmonth SMALLINT NOT NULL
+  , birthday SMALLINT NOT NULL
+  , signid SMALLINT NOT NULL
+  , gender CHAR(1) NOT NULL
+  , key CHAR(32) NOT NULL UNIQUE
+  , applydate TIMESTAMP DEFAULT NOW()
+  , confirmind BOOLEAN DEFAULT FALSE
+  -- , CONSTRAINT pk_mbrapp_email PRIMARY KEY (email)
+  , CONSTRAINT fk_mbrapp_signid FOREIGN KEY (signid) REFERENCES sign(signid)
+);
+
+----
+
+CREATE TABLE member
+(
+  memberid BIGSERIAL NOT NULL UNIQUE
+  , membername VARCHAR(255) NOT NULL UNIQUE
+  , email VARCHAR(255) NOT NULL PRIMARY KEY
+  , password VARCHAR(255) NOT NULL
+  , birthmonth SMALLINT NOT NULL
+  , birthday SMALLINT NOT NULL
+  , signid SMALLINT NOT NULL REFERENCES sign(signid)
+  , gender CHAR(1) NOT NULL
+  , profileurl TEXT NOT NULL
+  , motto TEXT NOT NULL DEFAULT '(no motto)'
+  , joindate TIMESTAMP DEFAULT NOW()
+  -- , applydate DATE NOT NULL /* only if i use email confirmation! */
+  -- , CONSTRAINT pk_mbr_email PRIMARY KEY (email)
+  -- , CONSTRAINT fk_mbr_signid FOREIGN KEY (signid) REFERENCES sign(signid)
+);
+
+----
+
+CREATE TABLE memberhobby
+(
+  hobbyid BIGSERIAL NOT NULL PRIMARY KEY
+  , memberid BIGINT NOT NULL REFERENCES member(memberid)
+  , hobby VARCHAR(40) NOT NULL
+);
+
+----
+
+/*
+CREATE TABLE memberimage
+(
+  imageid BIGSERIAL NOT NULL PRIMARY KEY
+  , memberid BIGINT NOT NULL REFERENCES member(memberid)
+  , url TEXT NOT NULL
+  -- , CONSTRAINT pk_mbrimg_imgid PRIMARY KEY (imageid)
+  -- , CONSTRAINT fk_mbrimg_mbrid FOREIGN KEY (memberid) REFERENCES member(memberid)
+);
+*/
+
+----
+
+CREATE TABLE horoscope
+(
+  horoscopeid SERIAL NOT NULL
+  , signid SMALLINT NOT NULL
+  , date DATE NOT NULL
+  , text TEXT NOT NULL
+  , CONSTRAINT pk_horoscope_signid_date PRIMARY KEY (signid, date)
+  , CONSTRAINT fk_horoscope_signid FOREIGN KEY (signid) REFERENCES sign(signid)
+);
+
+----
+
+INSERT INTO sign
+(signid, sign)
+VALUES
+(1, 'Capricorn'),
+(2, 'Aquarius'),
+(3, 'Pisces'),
+(4, 'Aries'),
+(5, 'Taurus'),
+(6, 'Gemini'),
+(7, 'Cancer'),
+(8, 'Leo'),
+(9, 'Virgo'),
+(10, 'Libra'),
+(11, 'Scorpio'),
+(12, 'Sagittarius');
+
+----
+
+INSERT INTO member
+(membername, email, password, birthmonth, birthday, signid, gender, applydate)
+VALUES
+('Mrs. January', 'jan@aol.com', 'pwd1', 1, 1, 1, 'F', '2015-04-05'),
+('Mr. February', 'feb@yahoo.com', 'pwd2', 2, 2, 2, 'M', '2015-04-05'),
+('Dr. March', 'mar@hotmail.com', 'pwd3', 3, 3, 3, 'M', '2015-04-06'),
+('Prof. April', 'apr@gmail.com', 'pwd4', 4, 4, 4, 'F', '2015-04-06');
+
+----
+
+INSERT INTO member
+(membername, email, password, birthmonth, birthday, signid, gender, profileurl, motto)
+VALUES
+('CoolCat', 'bjones1831@gmail.com', 'coolcat', 11, 16, 11, 'M', 
+'https://s3-us-west-2.amazonaws.com/fullstacker-test/profile_pics/FB_IMG_1427915690181.jpg', 
+'Live long and prosper!');
+
+INSERT INTO member
+(membername, email, password, birthmonth, birthday, signid, gender, profileurl, motto)
+VALUES
+('Yams', 'yams@gmail.com', 'yams', 7, 18, 6, 'F', 
+'https://s3-us-west-2.amazonaws.com/fullstacker-test/profile_pics/FB_IMG_1427915690181.jpg', 
+'Yaaaaaammmmmmssssss!');
+
+
+INSERT INTO memberhobby
+(memberid, hobby)
+VALUES
+(1, 'Web Stuff'),
+(1, 'Reading'),
+(1, 'Fantasy Football');
+
+----
+

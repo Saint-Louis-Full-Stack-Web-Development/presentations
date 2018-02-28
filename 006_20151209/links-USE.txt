@@ -1,0 +1,165 @@
+# sudo dpkg -s <packageName>
+
+# sudo apt-cache policy salt-master
+# sudo apt-cache policy salt-minion
+
+INSTALL MASTER AND MINION:
+https://docs.saltstack.com/en/latest/topics/cloud/install/index.html
+https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-salt-master-and-minion-servers-on-ubuntu-14-04
+
+# sudo add-apt-repository ppa:saltstack/salt
+# sudo apt-get update
+# sudo apt-get install salt-master salt-minion salt-doc salt-cloud salt-ssh
+
+
+CONFIGURE THE MASTER AND MINION :
+https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-salt-master-and-minion-servers-on-ubuntu-14-04#initial-master-configuration
+
+** Create config mgmt directory where master will look for files
+# sudo mkdir -p /srv/{salt,pillar}
+
+** Adjust master config file
+# sudo nano /etc/salt/master
+
+(In the file)
+
+Set the file_roots dictionary
+(where master will look for config mgmt instructions... base = default env.)
+
+(YAML => NO TABS! 2 SPACE IDENTATION!!)
+((Find and uncomment) or add the following lines)
+file_roots:
+  base:
+    - /srv/salt
+    - /srv/formulas
+
+pillar_roots:
+  base:
+    - /srv/pillar
+
+** Adjust minion config file
+# sudo nano /etc/salt/minion
+
+(In the file)
+
+(Specify the master that this minion (which is on the master) should connect to)
+(Set master key to the local address)
+Change #master: salt .... TO .... master: 127.0.0.1
+
+** Restart the master and minion processes
+# sudo restart salt-master
+# sudo restart salt-minion
+
+ACCEPT MINION KEY :
+
+** List all of the keys (should just be 1 unaccepted)
+# sudo salt-key --list all
+
+** Confirm fingerprints
+# sudo salt-call key.finger --local
+# sudo salt-key -f ip-172-30-0-49.ec2.internal <Returned as an unaccepted key>
+
+	These values need to match!
+
+** Accept the confirmed key
+# sudo salt-key -a ip-172-30-0-49.ec2.internal
+
+	Type Y
+
+** Show the newly accepted minion key
+# sudo salt-key --list all
+
+
+TEST MASTER AND MINION COMMUNICATION :
+
+# sudo salt '*' test.ping
+
+	This should return the minion ID and 'True'
+
+INSTALL THE MINION(S) :
+
+** Create minion EC2 (manual or coded... SaltCloud)
+<< done >>
+
+** Install Salt-Minion
+# sudo apt-get update
+# sudo apt-get upgrade
+
+# sudo apt-add-repository ppa:saltstack/salt
+# sudo apt-get update
+# sudo apt-get install salt-minion
+
+
+CONFIGURE THE MINION(S) :
+
+** Get the Salt Master Public Key Fingerprint
+
+(On the Salt Master)
+# sudo salt-key -F master
+
+(Copy the value of master.pub)
+5d:db:62:98:05:cc:c7:dc:29:f3:b5:64:ff:90:69:33
+
+(On the Salt Minion)
+# sudo nano /etc/salt/minion
+
+(In the file)
+
+(Specify the master that this minion should connect to)
+(Set master key to the private IP address)
+Change #master: salt .... TO .... master: 172.30.0.49  << OLD ... master: ip-172-30-0-49.ec2.internal >>
+
+(Set master_finger to the fingerprint from above)
+Change #master_finger: '' .... TO .... master_finger: '5d:db:62:98:05:cc:c7:dc:29:f3:b5:64:ff:90:69:33'
+
+** Restart the minion
+# sudo restart salt-minion
+
+** Check the key fingerprint on the new minion server
+# sudo salt-call key.finger --local
+
+** Open up ports 4505 and 4506 in the AWS
+>> IN THE GUI : Network & Security >> Security Groups
+>> Add an Inbound 'Custom TCP' rule for each port and select 'Anywhere' for the accepted IP address range
+>> Outbound as well ???
+
+** Confirm the master is aware of this new minion key
+(On the master)
+# sudo salt-key --list all
+
+	We should see the new key!
+
+** Confirm this minion key has the correct fingerprint
+(On the master)
+# sudo salt-key -f ip-172-30-1-212.ec2.internal
+	<< This is the 'Unaccepted Key' from the minion >>
+
+** Accept the new minion key on the master (assuming the fingerprint checks out)
+# sudo salt-key -a ip-172-30-1-212.ec2.internal
+
+	Type Y
+
+** Confirm the new minion key has been accepted
+# sudo salt-key --list all
+
+	We should see the new minion key in the 'Accepted Keys:' bucket
+
+** Confirm the master and the minion can communicate with each other
+# sudo salt '*' test.ping
+
+	We should see the new minion IP address(es) return 'True'
+
+--------------------------------------------------------
+
+** To see version of Salt components :
+(On Master)
+# salt --versions-report
+
+(On Minion)
+# salt-minion --versions-report
+
+--------------
+
+iptables (Debian) :
+https://wiki.debian.org/iptables
+

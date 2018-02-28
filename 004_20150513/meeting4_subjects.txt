@@ -1,0 +1,50 @@
+HTML:
+DEFN ->
+    <div>
+    <span>
+    id vs. class vs. name (form elements)
+
+------------------------------
+CSS:
+DEFN ->
+    in-line vs. external style sheets
+    linking to HTML document
+
+------------------------------
+jQuery:
+DEFN ->
+    import jquery file
+    import validate file
+    <script>
+    linking to DOM elements
+    async vs. sync
+    JSON rules
+
+------------------------------
+Bootstrap 3:
+DEFN ->
+    import Bootstrap file
+    Bootstrap DOM elements
+    CSS responsiveness
+
+------------------------------
+Javascript:
+DEFN ->
+
+------------------------------
+PHP:
+
+------------------------------
+PostgreSQL:
+
+------------------------------
+Elastic IP:
+
+------------------------------
+Domain Name:
+
+------------------------------
+Route 53:
+
+------------------------------
+Nginx:
